@@ -1,0 +1,6 @@
+Revision history for Perl extension Net::UCP::TransactionManager.
+
+0.01  Tue Apr  8 12:20:20 2008
+	- original version; created by h2xs 1.23 with options
+		-AXn Net::UCP::TransactionManager
+
