@@ -9,25 +9,61 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use constant HIGHEST_NBR => 99;
+
 sub new { bless({}, shift())->_init(@_); }
+
+sub get_trn {
+    my ($self, $resp) = @_;
+    
+    return unless defined $resp;
+    return $1 if ($resp =~ m/^(\d{2}).*/);
+}
 
 sub next_trn {
     my $self = shift;
-
+    
     $self->{TRN}++;
     ($self->{TRN} > HIGHEST_NBR) && do{ $self->{TRN} = 0 };
+    return $self->{TRN};
+}
+
+sub current_trn {
+    my $self = shift;
+
+    $self->reset_trn() if !defined $self->{TRN};
+    return $self->{TRN};
+}
+
+sub set_trn {
+    my $self    = shift;
+    my $tmp_trn = shift;
+
+    if ($tmp_trn =~ m/\A\d+\Z/) {
+	$self->{TRN} = $tmp_trn;
+	$self->{TRN} = 0 if ($self->{TRN} > HIGHEST_NBR);
+    }
+
+    return $self->current_trn();
 }
 
 sub reset_trn {
-    $_[0]->{TRN} = 0;
+    my $self = shift;
+    $self->{TRN} = 0;
+}
+
+sub padding {
+    my $self = shift;
+    return sprintf("%02d", $self->{TRN});
 }
 
 sub _init {
-    $_[0]->reset_trn();
-    $_[0];
+    my $self = shift;
+    
+    $self->reset_trn();
+    $self;
 }
 
 1;
